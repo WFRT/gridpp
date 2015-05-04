@@ -2,13 +2,14 @@
 CC      	= g++
 IFLAGS  	= -I/usr/include/
 LFLAGS   = -L/usr/lib
+CFLAGS   = -Wall -Wno-reorder -Wno-sign-compare
 
 # Flags for optimized compilation
-CFLAGS_O = -O3 -fopenmp
+CFLAGS_O = -O3 -fopenmp $(CFLAGS)
 LIBS_O   = -lnetcdf_c++
 
 # Flags for debug compilation
-CFLAGS_D = -g -pg -rdynamic -fprofile-arcs -ftest-coverage -coverage -DDEBUG
+CFLAGS_D = -g -pg -rdynamic -fprofile-arcs -ftest-coverage -coverage -DDEBUG $(CFLAGS)
 LIBS_D   = -lnetcdf_c++ -L build/gtest -lgtest
 
 
