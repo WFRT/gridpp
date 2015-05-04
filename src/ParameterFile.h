@@ -48,8 +48,6 @@ class ParameterFile {
 class ParameterFileSpatial {
    public:
       ParameterFileSpatial(std::string iFilename);
-      //! Get number of unique locations in parameter set
-      int getNumLocations() const;
 
       //! Get parameters for a specific time and location index
       //! @param iLocation Must be >= 0 and < getNumLocations()
@@ -60,15 +58,21 @@ class ParameterFileSpatial {
       // Get unique locations in parameter set
       std::vector<Location> getLocations() const;
 
-      //! Returns the number of parameters in one parameter set
-      int getNumParameters() const;
+      // Get unique times in parameter set
+      std::vector<int> getTimes() const;
+
+      //! Set the parameter valid for specified time and location
+      void setParameters(Parameters iParameters, int iTime, const Location& iLocation);
+
+      //! Write parameter file to disk
+      //! @param iFilename Write to this filename. If empty, write to the file that was read from.
+      void write(const std::string& iFilename="") const;
 
       //! Returns the filename where parameters are retrieved from
       std::string getFilename() const;
    private:
       std::map<int, std::map<Location, Parameters> > mParameters; // Offset, Location, Parameters
       std::string mFilename;
-      int mNumParameters;
 };
 /*
 class ParameterFileRegion {

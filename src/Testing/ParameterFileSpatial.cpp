@@ -1,6 +1,7 @@
 #include "../ParameterFile.h"
 #include "../Util.h"
 #include <gtest/gtest.h>
+#include <algorithm>
 
 namespace {
    TEST(ParameterFileSpatial, default) {
@@ -34,6 +35,29 @@ namespace {
       par = file.getParameters(1, loc0);
       ASSERT_EQ(1, par.size());
       EXPECT_FLOAT_EQ(4, par[0]);
+   }
+   TEST(ParameterFileSpatial, write) {
+      ParameterFileSpatial file("testing/files/parametersKrieging.txt");
+      file.write("testing/files/parametersKrieging2.txt");
+      ParameterFileSpatial file2("testing/files/parametersKrieging2.txt");
+      // Should have the same locations
+      std::vector<Location> locations1 = file.getLocations();
+      std::vector<Location> locations2 = file.getLocations();
+      std::sort(locations1.begin(), locations1.end());
+      std::sort(locations2.begin(), locations2.end());
+      EXPECT_EQ(locations1, locations2);
+   }
+   TEST(ParameterFileSpatial, emptyFile) {
+      ParameterFileSpatial file("testing/files/89h9382he9823he92.txt");
+      std::vector<Location> locations = file.getLocations();
+      EXPECT_EQ(0, locations.size());
+   }
+   TEST(ParameterFileSpatial, writeError) {
+      ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+      Util::setShowError(false);
+      ParameterFileSpatial file("testing/files/parametersKrieging.txt");
+      // Shouldn't be able to write to a directory
+      EXPECT_DEATH(file.write("testing/files/"), ".*");
    }
 }
 int main(int argc, char **argv) {

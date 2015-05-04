@@ -16,6 +16,7 @@ class Location {
       void elev(float iElev);
       //! Used for sorting in std::map
       bool operator<(const Location &right) const;
+      bool operator==(const Location &right) const;
    private:
       float mLat;
       float mLon;

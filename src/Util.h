@@ -2,6 +2,7 @@
 #define UTIL_H
 #include <string>
 #include <vector>
+#include <set>
 
 typedef std::vector<std::vector<float> > vec2; // Lat, Lon
 
@@ -85,6 +86,14 @@ class Util {
       //! \brief Computes the inverse logit of x
       //! @return x A value on the interval (0,1)
       static float invLogit(float x);
+
+      template <class T> static std::vector<T> combine(const std::vector<T>& i1, const std::vector<T>& i2) {
+         std::set<T> allValues(i1.begin(), i1.end());
+         for(int i = 0; i < i2.size(); i++) {
+            allValues.insert(i2[i]);
+         }
+         return std::vector<T>(allValues.begin(), allValues.end());
+      };
       
       //! \brief Comparator class for sorting pairs using the first entry.
       //! Sorts from smallest to largest

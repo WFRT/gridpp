@@ -21,21 +21,24 @@ bool Location::operator<(const Location &right) const {
    }
 }
 
+bool Location::operator==(const Location &right) const {
+   return (mLat == right.lat() && mLon == right.lon() && mElev == right.elev());
+}
 float Location::lat() const {
    return mLat;
-};
+}
 float Location::lon() const {
    return mLon;
-};
+}
 float Location::elev() const {
    return mElev;
-};
+}
 void Location::lat(float iLat) {
    mLat = iLat;
-};
+}
 void Location::lon(float iLon) {
    mLon = iLon;
-};
+}
 void Location::elev(float iElev) {
    mElev = iElev;
-};
+}
