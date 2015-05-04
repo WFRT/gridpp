@@ -95,7 +95,6 @@ ParameterFileSpatial::ParameterFileSpatial(std::string iFilename) :
       Util::error("Parameter file '" + iFilename + "' does not exist");
    }
    mNumParameters = Util::MV;
-   std::set<Location> allLocations;
    std::vector<std::pair<std::pair<int, Location>, Parameters> > allParameters; // Time, Location, Parameters
    while(ifs.good()) {
       char line[10000];
@@ -145,7 +144,6 @@ ParameterFileSpatial::ParameterFileSpatial(std::string iFilename) :
             Util::error(ss.str());
          }
          Location location(lat,lon,elev);
-         allLocations.insert(location);
          Parameters parameters(values);
          std::pair<int,Location> timeLoc(time,location);
          allParameters.push_back(std::pair<std::pair<int,Location>,Parameters>(timeLoc,parameters));
@@ -158,30 +156,21 @@ ParameterFileSpatial::ParameterFileSpatial(std::string iFilename) :
    if(!Util::isValid(mNumParameters))
       mNumParameters = 0;
 
-   mLocations = std::vector<Location>(allLocations.begin(), allLocations.end());
-   std::map<Location, int> location2Index;
-   for(int i = 0; i < mLocations.size(); i++) {
-      location2Index[mLocations[i]] = i;
-   }
-
    // Rearrange parameters
    for(int i = 0; i < allParameters.size(); i++) {
       std::pair<int, Location> timeLoc = allParameters[i].first;
       int currTime = timeLoc.first;
       Location currLoc = timeLoc.second;
       Parameters currParameters = allParameters[i].second;
-      int currLocIndex = location2Index[currLoc];
-      mParameters[currTime][currLocIndex] = currParameters;
+      mParameters[currTime][currLoc] = currParameters;
    }
-
-   Parameters par = getParameters(0, 0);
 }
 
-Parameters ParameterFileSpatial::getParameters(int iTime, int iLocation) const {
-   // TODO: Check if missing
-   std::map<int, std::map<int, Parameters> >::const_iterator it = mParameters.find(iTime);
-   assert(it != mParameters.end());
-   std::map<int, Parameters>::const_iterator it2 = it->second.find(iLocation);
+Parameters ParameterFileSpatial::getParameters(int iTime, const Location& iLocation) const {
+   std::map<int, std::map<Location, Parameters> >::const_iterator it = mParameters.find(iTime);
+   if(it == mParameters.end())
+      return Parameters();
+   std::map<Location, Parameters>::const_iterator it2 = it->second.find(iLocation);
    if(it2 == it->second.end()) {
       return Parameters();
    }
@@ -190,12 +179,17 @@ Parameters ParameterFileSpatial::getParameters(int iTime, int iLocation) const {
    }
 }
 
-int ParameterFileSpatial::getNumLocations() const {
-   return mLocations.size();
-}
-
 std::vector<Location> ParameterFileSpatial::getLocations() const {
-   return mLocations;
+   std::set<Location> locationsSet;
+   std::map<int, std::map<Location, Parameters> >::const_iterator it;
+   for(it = mParameters.begin(); it != mParameters.end(); it++) {
+      std::map<Location, Parameters>::const_iterator it2;
+      for(it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+         locationsSet.insert(it2->first);
+      }
+   }
+   std::vector<Location> locations(locationsSet.begin(), locationsSet.end());
+   return locations;
 }
 
 int ParameterFileSpatial::getNumParameters() const {

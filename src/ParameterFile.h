@@ -55,7 +55,7 @@ class ParameterFileSpatial {
       //! @param iLocation Must be >= 0 and < getNumLocations()
       //! @return Parameters valid for time and location. If no parameters are available
       //! returns an empty parameter set
-      Parameters getParameters(int iTime, int iLocation) const;
+      Parameters getParameters(int iTime, const Location& iLocation) const;
 
       // Get unique locations in parameter set
       std::vector<Location> getLocations() const;
@@ -66,8 +66,7 @@ class ParameterFileSpatial {
       //! Returns the filename where parameters are retrieved from
       std::string getFilename() const;
    private:
-      std::map<int, std::map<int, Parameters> > mParameters; // Offset, Location, Parameters
-      std::vector<Location> mLocations;
+      std::map<int, std::map<Location, Parameters> > mParameters; // Offset, Location, Parameters
       std::string mFilename;
       int mNumParameters;
 };
