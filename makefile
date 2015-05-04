@@ -29,8 +29,11 @@ CALSRC  	= $(wildcard src/Calibrator/*.cpp)
 FILESRC 	= $(wildcard src/File/*.cpp)
 DOWNSRC 	= $(wildcard src/Downscaler/*.cpp)
 DRVSRC  	= src/Driver/Gpp.cpp
-DRVOBJ_O = $(BUILDDIR_O)/Driver/Gpp.o
+DRVOBJ_O	= $(BUILDDIR_O)/Driver/Gpp.o
 DRVOBJ_D	= $(BUILDDIR_D)/Driver/Gpp.o
+KFSRC  	= src/Driver/Kf.cpp
+KFOBJ_O	= $(BUILDDIR_O)/Driver/Kf.o
+KFOBJ_D	= $(BUILDDIR_D)/Driver/Kf.o
 SRC     	= $(CORESRC) $(CALSRC) $(FILESRC) $(DOWNSRC)
 HEADERS 	= $(SRC:.cpp=.h)
 OBJ0_O   = $(patsubst src/%,$(BUILDDIR_O)/%,$(SRC))
@@ -63,8 +66,14 @@ $(BUILDDIR_D)/%.E : src/%.cpp $(INCS)
 gridpp: $(OBJ_O) $(DRVOBJ_O) makefile
 	$(CC) $(CFLAGS_O) $(LFLAGS) $(OBJ_O) $(DRVOBJ_O) $(LIBS_O) -o $@
 
+kalmanFilter: $(OBJ_O) $(KFOBJ_O) makefile
+	$(CC) $(CFLAGS_O) $(LFLAGS) $(OBJ_O) $(KFOBJ_O) $(LIBS_O) -o $@
+
 gridpp_debug: $(OBJ_D) $(DRVOBJ_D) makefile gtest
 	$(CC) $(CFLAGS_D) $(LFLAGS) $(OBJ_D) $(DRVOBJ_D) $(LIBS_D) -o $@
+
+kalmanFilter_debug: $(OBJ_D) $(KFOBJ_D) makefile gtest
+	$(CC) $(CFLAGS_D) $(LFLAGS) $(OBJ_D) $(KFOBJ_D) $(LIBS_D) -o $@
 
 test: gtest $(TESTS)
 	./runAllTests.sh
