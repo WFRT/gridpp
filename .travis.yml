@@ -11,7 +11,7 @@ before_install:
   - sudo pbuilder create --debootstrapopts --variant=buildd
 
 install:
-  - pip install cpp-coveralls
+  - sudo pip install cpp-coveralls
 
 script:
   - sudo debuild-pbuilder -us -uc
