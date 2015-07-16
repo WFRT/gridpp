@@ -10,6 +10,13 @@ before_install:
   - sudo apt-get install pbuilder aptitude
   - sudo pbuilder create --debootstrapopts --variant=buildd
 
-script: sudo debuild-pbuilder -us -uc
+install:
+  - pip install cpp-coveralls
+
+script:
+  - sudo debuild-pbuilder -us -uc
+
+after_success:
+   coveralls --gcov-options '\-lp'
 
 os: linux
